@@ -2,6 +2,23 @@
 const express = require("express");
 const router = express.Router();
 const Turno = require("../models/Turno");
+const PORT = process.env.PORT || 3000;
+const app = express();
+require("dotenv").config();
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+app.use(cors());
+app.use(express.json());
+
+// Conexión Mongo
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB conectado"))
+  .catch(err => console.error(err));
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
+});
 
 router.post("/", async (req, res) => {
   const { nombre, email, telefono, fecha, hora } = req.body;
