@@ -1,7 +1,7 @@
 // routes/turnos.js
 const express = require("express");
 const router = express.Router();
-const Turno = require("../models/Turno");
+const Turno = require("./models/Turno");
 const PORT = process.env.PORT || 3000;
 const app = express();
 require("dotenv").config();
