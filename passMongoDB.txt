@@ -1,0 +1,4 @@
+User: admin_smile
+Pass: iLzijjj9VG7hC6FB
+
+mongodb+srv://admin_smile:iLzijjj9VG7hC6FB@cluster0.mb8fxpg.mongodb.net/clinica?appName=Cluster0
