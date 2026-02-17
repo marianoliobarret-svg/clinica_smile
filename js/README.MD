@@ -1,65 +1,36 @@
-🦷 Clínica Dental – Mini Sistema de Turnos
+🦷 Clínica Dental – Sistema de Turnos (Portfolio)
 
-Sistema de reserva de turnos con:
+Sistema fullstack de reserva de turnos desarrollado con:
 
 Node.js + Express
 
-MongoDB (Mongoose)
+MongoDB Atlas (Mongoose)
 
-Validación de días y horarios
+Frontend HTML + JS Vanilla
 
-Bloqueo de turnos duplicados
+Deploy en Render
 
-Generación dinámica de horarios en frontend
+(Próximo paso: Netlify)
 
-📁 Estructura del Proyecto
-Backend
-/backend
- ├── server.js
- ├── models/
- │     └── Turno.js
- ├── routes/
- │     └── turnos.js
- ├── utils/
- │     └── horarios.js
- ├── .env
- └── package.json
+🚀 Estado Actual
+✅ Backend (Producción)
 
-Frontend
+Deployado en Render
 
-Formulario HTML
+Conectado a MongoDB Atlas
 
-Generación dinámica de horarios
+Variables de entorno configuradas
 
-Conexión vía fetch a API
+CORS habilitado
 
-Validación de fechas pasadas
+Puerto dinámico funcionando
 
-Bloqueo de fines de semana
+Logs actuales:
 
-🚀 Cómo correr el proyecto localmente
-1️⃣ Instalar dependencias
+Servidor corriendo en puerto 10000
+MongoDB conectado
 
-Dentro de /backend:
-
-npm install
-
-2️⃣ Configurar variables de entorno
-
-Crear archivo .env:
-
-MONGO_URI=tu_string_de_mongodb
-PORT=3000
-
-3️⃣ Iniciar servidor
-node server.js
-
-
-Servidor corre en:
-
-http://localhost:3000
-
-🔌 Endpoints disponibles
+🔌 Endpoints activos
 Crear turno
 POST /api/turnos
 
@@ -75,13 +46,11 @@ Body:
 }
 
 
-Validaciones:
+Valida:
 
-Solo lunes a viernes
+Día hábil
 
-Solo 9:00 a 17:30
-
-Turnos cada 30 min
+Horario válido
 
 No duplicados
 
@@ -91,62 +60,86 @@ GET /api/turnos/:fecha
 
 Ejemplo:
 
-GET /api/turnos/2026-02-20
+/api/turnos/2026-02-20
 
 
 Devuelve:
 
-["09:30", "11:00", "16:30"]
+[]
 
-🧠 Lógica implementada
-Backend valida:
 
-✔ Día hábil
-✔ Horario válido
-✔ Turno no duplicado
+o
 
-Frontend controla:
+["09:30", "11:00"]
 
-✔ Fecha mínima = hoy
-✔ Bloqueo fines de semana
-✔ Generación automática 9:00–17:30
-✔ Desactivación de horarios ocupados
-✔ Guardado en input hidden
+🌐 URL Backend Producción
+https://TU-APP.onrender.com
 
-🌐 Deploy previsto
+🧠 Arquitectura final
+backend/
+│
+├── server.js
+├── models/
+│   └── Turno.js
+├── routes/
+│   └── turnos.js
+├── utils/
+├── package.json
 
-Frontend → Netlify
-Backend → Render
-DB → MongoDB Atlas
 
-Pendiente:
+Separación correcta:
 
-Cambiar URL fetch de localhost a URL producción
+server.js → servidor principal
 
-Configurar CORS correctamente
+routes → lógica endpoints
 
-📌 Pendientes para continuar
+models → esquema Mongoose
 
- Confirmación por email automática
+⚠️ Pendiente actual
 
- Panel admin para ver turnos
+Frontend conectado a producción pero:
 
- Envío WhatsApp automático
+Error local ERR_CONNECTION_REFUSED
 
- Manejo de errores visual más elegante (no usar alert)
+Probablemente por:
 
- Loader mientras se cargan horarios
+URL mal apuntada
 
- Manejo de zona horaria explícita
+Uso de file:// en vez de Live Server
 
-💡 Estado actual
+O fetch mal configurado
 
-Sistema funcional en entorno local.
-Listo para integración con producción.
-Arquitectura limpia y escalable.
+🎯 Plan para retomar a la tarde
+FASE 1 – Debug frontend contra backend producción
 
-Mariano… mañana cuando volvamos podemos arrancar directo por:
+Verificar fetch definitivo
 
-1️⃣ Deploy completo
-2️⃣ Confirmación automática por email
-3️⃣ Panel admin minimalista
+Probar con Live Server
+
+Confirmar:
+
+Carga horarios
+
+Guarda turno
+
+Se persiste en Atlas
+
+FASE 2 – Deploy frontend
+
+Subir a Netlify
+
+Ajustar CORS si es necesario
+
+Test completo online
+
+FASE 3 – Mejora del sistema
+
+Confirmación automática por email
+
+Panel admin minimalista
+
+Formulario de contacto
+
+Loader UX
+
+Manejo de errores visual

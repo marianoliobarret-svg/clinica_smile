@@ -2,6 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const contactoRoutes = require("./routes/contacto");
+app.use("/api/contacto", contactoRoutes);
+
 
 const turnosRoutes = require("./routes/turnos");
 

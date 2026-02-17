@@ -1,32 +1,48 @@
-const reveals = document.querySelectorAll('.reveal');
+const API_URL = "https://clinica-smile.onrender.com";
 
-const navbar = document.querySelector(".navbar");
+document.addEventListener("DOMContentLoaded", () => {
 
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 80) {
-    navbar.classList.add("scrolled");
-  } else {
-    navbar.classList.remove("scrolled");
-  }
-});
+  const navbar = document.querySelector(".navbar");
+  const reveals = document.querySelectorAll(".reveal");
+  const faders = document.querySelectorAll(".fade-scroll");
 
-function revealOnScroll() {
-  reveals.forEach(el => {
-    const windowHeight = window.innerHeight;
-    const elementTop = el.getBoundingClientRect().top;
-    const visible = 100;
+  const fechaInput = document.querySelector('input[type="date"]');
+  const horariosContainer = document.getElementById("horarios");
+  const horaHidden = document.querySelector('input[name="hora"]');
+  const form = document.querySelector("form");
 
-    if (elementTop < windowHeight - visible) {
-      el.classList.add('active');
+  if (!form || !fechaInput || !horariosContainer || !horaHidden) return;
+
+  /* ================= NAVBAR SCROLL ================= */
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 80) {
+      navbar?.classList.add("scrolled");
     } else {
-      el.classList.remove('active');
+      navbar?.classList.remove("scrolled");
     }
   });
-}
 
-document.addEventListener("DOMContentLoaded", function () {
+  /* ================= REVEAL SCROLL ================= */
 
-  const faders = document.querySelectorAll('.fade-scroll');
+  function revealOnScroll() {
+    reveals.forEach(el => {
+      const windowHeight = window.innerHeight;
+      const elementTop = el.getBoundingClientRect().top;
+      const visible = 100;
+
+      if (elementTop < windowHeight - visible) {
+        el.classList.add("active");
+      } else {
+        el.classList.remove("active");
+      }
+    });
+  }
+
+  window.addEventListener("scroll", revealOnScroll);
+  window.addEventListener("load", revealOnScroll);
+
+  /* ================= INTERSECTION OBSERVER ================= */
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -40,90 +56,147 @@ document.addEventListener("DOMContentLoaded", function () {
 
   faders.forEach(el => observer.observe(el));
 
-});
+  /* ================= FECHA CONFIG ================= */
 
-const fechaInput = document.querySelector('input[type="date"]');
-const horariosContainer = document.getElementById("horarios");
-const horaHidden = document.querySelector('input[name="horaSeleccionada"]');
-const hoy = new Date().toISOString().split("T")[0];
-fechaInput.setAttribute("min", hoy);
+  const hoy = new Date().toISOString().split("T")[0];
+  fechaInput.setAttribute("min", hoy);
 
-fechaInput.addEventListener("change", async () => {
+  fechaInput.addEventListener("change", async () => {
+   
 
-  const fecha = fechaInput.value;
-  horariosContainer.innerHTML = "";
-  horaHidden.value = "";
+    const fecha = fechaInput.value;
+    horariosContainer.innerHTML = "";
+    horaHidden.value = "";
 
-  const dia = new Date(fecha).getDay();
+    console.log("Fecha seleccionada:", fecha);
 
-  // Bloquear sábados y domingos
-  if (dia === 0 || dia === 6) {
-    alert("Solo se permiten turnos de lunes a viernes.");
-    return;
-  }
+    const dia = new Date(fecha).getDay();
 
-  // Obtener horarios ocupados desde backend
-  let ocupados = [];
-
-  try {
-    const response = await fetch(`http://localhost:3000/api/turnos/${fecha}`);
-    ocupados = await response.json();
-  } catch (error) {
-    console.error("Error al obtener horarios");
-  }
-
-  // Generar horarios válidos
-  const horarios = [];
-
-  for (let h = 9; h < 18; h++) {
-    horarios.push(`${h}:00`);
-    horarios.push(`${h}:30`);
-  }
-
-  horarios.forEach(hora => {
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.textContent = hora;
-
-    if (ocupados.includes(hora)) {
-      btn.disabled = true;
+    // Bloquear sábado (6) y domingo (0)
+    if (dia === 5 || dia === 6) {
+      alert("Solo se permiten turnos de lunes a viernes.");
+      fechaInput.value = "";
+      return;
     }
 
-    btn.addEventListener("click", () => {
+    let ocupados = [];
 
-      document.querySelectorAll(".horarios-grid button")
-        .forEach(b => b.classList.remove("selected"));
+    try {
+      const response = await fetch(`${API_URL}/api/turnos/${fecha}`);
 
-      btn.classList.add("selected");
-      horaHidden.value = hora;
+      if (!response.ok) {
+        throw new Error("Error al obtener horarios");
+      }
+
+      ocupados = await response.json();
+
+      console.log("Horarios ocupados:", ocupados);
+
+
+    } catch (error) {
+      console.error(error);
+      alert("Error al obtener horarios del servidor.");
+      return;
+    }
+
+    /* ================= GENERAR HORARIOS ================= */
+
+    const horarios = [];
+
+    for (let h = 9; h < 18; h++) {
+      horarios.push(`${h}:00`);
+      horarios.push(`${h}:30`);
+    }
+
+    horarios.forEach(hora => {
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = hora;
+      btn.classList.add("hora-btn");
+
+      if (ocupados.includes(hora)) {
+        btn.disabled = true;
+      }
+
+      btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".hora-btn")
+          .forEach(b => b.classList.remove("selected"));
+
+        btn.classList.add("selected");
+        horaHidden.value = hora;
+      });
+
+      horariosContainer.appendChild(btn);
     });
 
-    horariosContainer.appendChild(btn);
+  });
+
+  /* ================= SUBMIT FORM ================= */
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!horaHidden.value) {
+      alert("Por favor seleccioná un horario.");
+      return;
+    }
+
+    const datos = {
+      nombre: form.querySelector('input[type="text"]').value,
+      email: form.querySelector('input[type="email"]').value,
+      telefono: form.querySelector('input[type="tel"]').value,
+      fecha: fechaInput.value,
+      hora: horaHidden.value
+    };
+
+    try {
+
+      const response = await fetch(`${API_URL}/api/turnos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(datos)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || "Error al reservar turno");
+        return;
+      }
+
+      alert("Turno reservado correctamente");
+
+      form.reset();
+      horariosContainer.innerHTML = "";
+      horaHidden.value = "";
+
+    } catch (error) {
+      alert("Error de conexión con el servidor");
+    }
+
   });
 
 });
 
+const contactoForm = document.getElementById("contactoForm");
+const contactoEstado = document.getElementById("contactoEstado");
 
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('load', revealOnScroll);
-
-// Frontend - conectar al formulario
-const form = document.querySelector("form");
-
-form.addEventListener("submit", async (e) => {
+contactoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const datos = {
-    nombre: form.querySelector('input[type="text"]').value,
-    email: form.querySelector('input[type="email"]').value,
-    telefono: form.querySelector('input[type="tel"]').value,
-    fecha: form.querySelector('input[type="date"]').value,
-    hora: form.querySelector('input[type="time"]').value
+    nombre: contactoForm.nombre.value,
+    email: contactoForm.email.value,
+    mensaje: contactoForm.mensaje.value
   };
 
   try {
-    const response = await fetch("http://localhost:3000/api/turnos", {
+
+    const response = await fetch(`${API_URL}/api/contacto`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -134,13 +207,18 @@ form.addEventListener("submit", async (e) => {
     const result = await response.json();
 
     if (!response.ok) {
-      alert(result.error);
-    } else {
-      alert("Turno reservado correctamente");
-      form.reset();
+      contactoEstado.textContent = result.error;
+      contactoEstado.style.color = "red";
+      return;
     }
 
+    contactoEstado.textContent = "Mensaje enviado correctamente ✔";
+    contactoEstado.style.color = "green";
+    contactoForm.reset();
+
   } catch (error) {
-    alert("Error de conexión con el servidor");
+    contactoEstado.textContent = "Error de conexión con el servidor";
+    contactoEstado.style.color = "red";
   }
+
 });

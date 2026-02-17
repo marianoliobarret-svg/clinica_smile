@@ -199,7 +199,7 @@ prioridad.</p>
 </section>
 
 
-<section class="reserva-turno">
+<section id="turnos" class="reserva-turno">
 
   <div class="reserva-img"></div>
 
@@ -208,20 +208,20 @@ prioridad.</p>
     <p>Elegí la fecha y el horario que mejor se adapte a tu agenda.</p>
 
     <form>
-      <input type="text" placeholder="Nombre completo" required>
-      <input type="email" placeholder="Correo electrónico" required>
-      <input type="tel" placeholder="Teléfono" required>
+      <input type="text" name="nombre" placeholder="Nombre completo" required>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+      <input type="tel" name="telefono" placeholder="Teléfono" required>
 
       <div class="fecha-hora">
-        <input type="date" required>
-        <input type="time" required>
+        <input type="date" id="fecha" name="fecha" required>
       </div>
 
-      <button type="submit">Confirmar Turno</button>
-      <input type="hidden" name="horaSeleccionada" required>
+      <input type="hidden" name="hora" required>
+
       <div id="horarios" class="horarios-grid"></div>
 
-    </form>
+      <button type="submit">Confirmar Turno</button>
+  </form>
   </div>
 
 </section>
@@ -230,12 +230,15 @@ prioridad.</p>
 <section id="contacto" class="section">
   <div class="reveal">
     <h2>Contacto</h2>
-    <form class="form">
-      <input type="text" placeholder="Nombre" required>
-      <input type="email" placeholder="Email" required>
-      <textarea placeholder="Mensaje"></textarea>
+
+    <form id="contactoForm" class="form">
+      <input type="text" name="nombre" required>
+      <input type="email" name="email" required>
+      <textarea name="mensaje" required></textarea>
       <button type="submit">Enviar</button>
+      <p id="contactoEstado"></p>
     </form>
+
   </div>
 </section>
 
