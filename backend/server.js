@@ -3,8 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const contactoRoutes = require("./routes/contacto");
-app.use("/api/contacto", contactoRoutes);
-
 
 const turnosRoutes = require("./routes/turnos");
 
@@ -13,6 +11,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/contacto", contactoRoutes);
+
 
 // Conexión Mongo
 mongoose.connect(process.env.MONGO_URI)
